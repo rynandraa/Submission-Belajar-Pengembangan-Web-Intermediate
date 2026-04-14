@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <title>Dicoding Story SPA</title>
+
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <!-- Note: CSS and JS bundles are automatically injected by HtmlWebpackPlugin -->
+  </head>
+  <body>
+    <!-- Skip to content for Accessibility -->
+    <a href="#content" class="skip-link">Skip to content</a>
+
+    <header class="main-header">
+      <div class="header-inner">
+        <h1 class="brand-title">StoryApp</h1>
+        <nav id="navigation" class="navigation">
+          <ul class="nav-list">
+            <li class="nav-item"><a href="#/">Home</a></li>
+            <li class="nav-item auth-related d-none"><a href="#/add-story">Add Story</a></li>
+            <li class="nav-item auth-related d-none"><a href="#" id="logout-btn">Logout</a></li>
+            <li class="nav-item guest-related"><a href="#/login">Login</a></li>
+            <li class="nav-item guest-related"><a href="#/register">Register</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main id="content" class="content">
+      <!-- SPA Views injected here -->
+    </main>
+
+    <footer class="main-footer">
+      <p>&copy; 2026 Dicoding Story SPA. All rights reserved.</p>
+    </footer>
+  </body>
+</html>

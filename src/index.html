@@ -3,40 +3,92 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="StoryApp — Bagikan momen terbaik Anda dengan dunia. Platform berbagi cerita berbasis peta interaktif."
+    />
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
-    <title>Dicoding Story SPA</title>
+    <title>StoryApp — Berbagi Cerita</title>
 
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <!-- Font Awesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+      crossorigin="anonymous"
+    />
+
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      crossorigin=""
+    />
+
+    <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-    <!-- Note: CSS and JS bundles are automatically injected by HtmlWebpackPlugin -->
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Note: CSS dan JS bundle otomatis di-inject oleh HtmlWebpackPlugin -->
   </head>
   <body>
-    <!-- Skip to content for Accessibility -->
+    <!-- Skip to content untuk Aksesibilitas -->
     <a href="#content" class="skip-link">Skip to content</a>
 
     <header class="main-header">
       <div class="header-inner">
-        <h1 class="brand-title">StoryApp</h1>
-        <nav id="navigation" class="navigation">
+        <a href="#/" class="brand-link" aria-label="StoryApp — Halaman Utama">
+          <i class="fas fa-book-open brand-icon"></i>
+          <span class="brand-title">StoryApp</span>
+        </a>
+
+        <nav id="navigation" class="navigation" aria-label="Navigasi utama">
           <ul class="nav-list">
-            <li class="nav-item"><a href="#/">Home</a></li>
-            <li class="nav-item auth-related d-none"><a href="#/add-story">Add Story</a></li>
-            <li class="nav-item auth-related d-none"><a href="#" id="logout-btn">Logout</a></li>
-            <li class="nav-item guest-related"><a href="#/login">Login</a></li>
-            <li class="nav-item guest-related"><a href="#/register">Register</a></li>
+            <li class="nav-item">
+              <a href="#/" aria-label="Halaman Home">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+              </a>
+            </li>
+            <li class="nav-item auth-related d-none">
+              <a href="#/add-story" aria-label="Tambah Story Baru">
+                <i class="fas fa-plus-circle"></i>
+                <span>Tambah Story</span>
+              </a>
+            </li>
+            <li class="nav-item auth-related d-none">
+              <a href="#" id="logout-btn" aria-label="Logout dari akun">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+              </a>
+            </li>
+            <li class="nav-item guest-related">
+              <a href="#/login" aria-label="Login ke akun Anda">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Login</span>
+              </a>
+            </li>
+            <li class="nav-item guest-related">
+              <a href="#/register" aria-label="Daftarkan akun baru">
+                <i class="fas fa-user-plus"></i>
+                <span>Daftar</span>
+              </a>
+            </li>
           </ul>
         </nav>
       </div>
     </header>
 
     <main id="content" class="content">
-      <!-- SPA Views injected here -->
+      <!-- SPA Views di-inject di sini -->
     </main>
 
     <footer class="main-footer">
-      <p>&copy; 2026 Dicoding Story SPA. All rights reserved.</p>
+      <p>
+        <i class="fas fa-heart" style="color: #f43f5e;"></i>
+        &copy; 2026 StoryApp. Dibuat dengan semangat untuk Dicoding.
+      </p>
     </footer>
   </body>
 </html>

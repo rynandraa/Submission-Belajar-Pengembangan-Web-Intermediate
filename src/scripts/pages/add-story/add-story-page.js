@@ -1,164 +1,283 @@
-import { AddStoryView } from './add-story-view.js';
-import { StoryApi } from '../../data/api.js';
-import { sessionHelper } from '../../utils/session-storage.js';
+import AddStoryPresenter from './add-story-presenter.js';
 import { mapHelper } from '../../utils/map-helper.js';
 import { cameraHelper } from '../../utils/camera-helper.js';
 
 export default class AddStoryPage {
-  constructor() {
-    this.view = new AddStoryView();
-    this.cameraBlob = null;
-  }
+  #presenter;
+  #cameraBlob = null;
 
   async render() {
-    if (!sessionHelper.isLoggedIn()) {
-      window.location.hash = '#/login';
-      return '';
-    }
-    return this.view.render();
+    return `
+      <div class="view-container">
+        <h2 class="content-title text-center">
+          <i class="fas fa-plus-circle"></i> Tambah Story Baru
+        </h2>
+
+        <div class="auth-wrapper" style="max-width: 860px;">
+          <form id="add-story-form" novalidate>
+            <div class="form-row">
+
+              <!-- Kiri: Deskripsi & Peta -->
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="description">
+                    <i class="fas fa-align-left"></i> Deskripsi Story
+                  </label>
+                  <textarea
+                    id="description"
+                    class="form-control"
+                    rows="4"
+                    placeholder="Ceritakan pengalamanmu hari ini..."
+                    required
+                  ></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    <i class="fas fa-map-marker-alt"></i> Pilih Lokasi
+                    <span class="badge-optional">Opsional</span>
+                  </label>
+                  <small class="form-hint">Klik pada peta untuk menandai lokasi story Anda.</small>
+                  <div
+                    class="map-container"
+                    id="picker-map"
+                    style="height: 260px;"
+                    tabindex="0"
+                    aria-label="Peta untuk memilih lokasi story"
+                  ></div>
+                  <div class="coord-display">
+                    <span id="lat-val"><i class="fas fa-crosshairs"></i> Lat: -</span>
+                    <span id="lon-val">Lon: -</span>
+                  </div>
+                  <input type="hidden" id="lat" />
+                  <input type="hidden" id="lon" />
+                </div>
+              </div>
+
+              <!-- Kanan: Foto & Kamera -->
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="photo">
+                    <i class="fas fa-upload"></i> Upload Foto
+                  </label>
+                  <input type="file" id="photo" class="form-control" accept="image/*" />
+                </div>
+
+                <div class="or-divider"><span>ATAU</span></div>
+
+                <div class="form-group">
+                  <label><i class="fas fa-camera"></i> Gunakan Kamera</label>
+                  <div class="camera-controls">
+                    <button type="button" id="start-cam-btn" class="btn btn-sm">
+                      <i class="fas fa-video"></i> Buka Kamera
+                    </button>
+                    <button type="button" id="stop-cam-btn" class="btn btn-sm btn-danger" style="display:none;">
+                      <i class="fas fa-stop"></i> Hentikan
+                    </button>
+                    <button type="button" id="take-photo-btn" class="btn btn-sm btn-success" style="display:none;">
+                      <i class="fas fa-camera"></i> Ambil Foto
+                    </button>
+                  </div>
+
+                  <div class="camera-preview-box">
+                    <video
+                      id="camera-video"
+                      style="width: 100%; height: auto; display:none;"
+                      autoplay
+                      playsinline
+                      aria-label="Preview kamera"
+                    ></video>
+                    <canvas
+                      id="camera-canvas"
+                      style="display:none; width:100%; height:auto;"
+                      aria-label="Foto yang diambil"
+                    ></canvas>
+                    <div id="camera-placeholder" class="camera-placeholder">
+                      <i class="fas fa-camera fa-2x"></i>
+                      <p>Preview kamera akan muncul di sini</p>
+                    </div>
+                  </div>
+                  <small id="cam-status" class="form-hint"></small>
+                </div>
+              </div>
+
+            </div><!-- end .form-row -->
+
+            <div style="text-align: center; margin-top: 28px;">
+              <button type="submit" id="add-story-submit" class="btn" style="padding: 12px 40px; font-size: 1rem;">
+                <i class="fas fa-paper-plane"></i> Post Story
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    `;
   }
 
   async afterRender() {
-    if (!sessionHelper.isLoggedIn()) return;
+    this.#presenter = new AddStoryPresenter({ view: this });
+    await this.#presenter.initialize();
+  }
 
+  // ── View Methods: Peta ───────────────────────────────────────────────────
+
+  initPickerMap() {
     setTimeout(() => {
       mapHelper.initMap('picker-map', [-6.2, 106.816666], false);
       mapHelper.enableClickSelection((lat, lon) => {
-        document.getElementById('lat').value = lat;
-        document.getElementById('lon').value = lon;
-        document.getElementById('lat-val').textContent = `Lat: ${lat.toFixed(4)}`;
-        document.getElementById('lon-val').textContent = `Lon: ${lon.toFixed(4)}`;
+        this.#updateCoordinates(lat, lon);
       });
     }, 100);
+  }
 
-    const form = document.getElementById('add-story-form');
-    const msgDiv = document.getElementById('add-story-msg');
-    const submitBtn = document.getElementById('add-story-submit');
+  #updateCoordinates(lat, lon) {
+    document.getElementById('lat').value = lat;
+    document.getElementById('lon').value = lon;
+    document.getElementById('lat-val').innerHTML = `<i class="fas fa-crosshairs"></i> Lat: ${lat.toFixed(4)}`;
+    document.getElementById('lon-val').textContent = `Lon: ${lon.toFixed(4)}`;
+  }
 
-    const startCamBtn = document.getElementById('start-cam-btn');
-    const stopCamBtn = document.getElementById('stop-cam-btn');
-    const takePhotoBtn = document.getElementById('take-photo-btn');
-    const videoObj = document.getElementById('camera-video');
-    const canvasObj = document.getElementById('camera-canvas');
+  // ── View Methods: Kamera ─────────────────────────────────────────────────
+
+  setupCamera() {
+    const startBtn = document.getElementById('start-cam-btn');
+    const stopBtn = document.getElementById('stop-cam-btn');
+    const photoBtn = document.getElementById('take-photo-btn');
+    const videoEl = document.getElementById('camera-video');
+    const canvasEl = document.getElementById('camera-canvas');
+    const placeholder = document.getElementById('camera-placeholder');
     const fileInput = document.getElementById('photo');
+    const originalBtnText = startBtn.innerHTML;
 
-    // Simpan teks asli tombol agar bisa direset
-    const originalStartBtnText = startCamBtn.textContent;
-
-    startCamBtn.addEventListener('click', async () => {
+    startBtn.addEventListener('click', async () => {
       try {
         await cameraHelper.startCamera('camera-video');
-        videoObj.style.display = 'block';
-        canvasObj.style.display = 'none';
-        startCamBtn.style.display = 'none';
-        stopCamBtn.style.display = 'block';
-        takePhotoBtn.style.display = 'block';
-        document.getElementById('cam-status').textContent = 'Camera active. Frame your shot!';
-        this.cameraBlob = null;
+        videoEl.style.display = 'block';
+        canvasEl.style.display = 'none';
+        placeholder.style.display = 'none';
+        startBtn.style.display = 'none';
+        stopBtn.style.display = 'inline-flex';
+        photoBtn.style.display = 'inline-flex';
+        this.#setCamStatus('Kamera aktif. Atur sudut pandang Anda!');
+        this.#cameraBlob = null;
       } catch (err) {
-        alert(err.message || 'Cannot access camera.');
+        Swal.fire({
+          icon: 'error',
+          title: 'Akses Kamera Gagal',
+          text: err.message || 'Tidak dapat mengakses kamera.',
+          confirmButtonColor: '#4f46e5',
+        });
       }
     });
 
-    stopCamBtn.addEventListener('click', () => {
+    stopBtn.addEventListener('click', () => {
       cameraHelper.stopCamera();
-      videoObj.style.display = 'none';
-      canvasObj.style.display = 'none'; // Sembunyikan canvas juga saat stop
-      startCamBtn.style.display = 'block';
-      startCamBtn.textContent = originalStartBtnText; // FIX Bug 2: reset teks tombol
-      stopCamBtn.style.display = 'none';
-      takePhotoBtn.style.display = 'none';
-      document.getElementById('cam-status').textContent = '';
+      videoEl.style.display = 'none';
+      canvasEl.style.display = 'none';
+      placeholder.style.display = 'flex';
+      startBtn.style.display = 'inline-flex';
+      startBtn.innerHTML = originalBtnText;
+      stopBtn.style.display = 'none';
+      photoBtn.style.display = 'none';
+      this.#setCamStatus('');
     });
 
-    takePhotoBtn.addEventListener('click', async () => {
+    photoBtn.addEventListener('click', async () => {
       const blob = await cameraHelper.takePhoto('camera-canvas');
       if (blob) {
-        this.cameraBlob = blob;
+        this.#cameraBlob = blob;
         cameraHelper.stopCamera();
-        videoObj.style.display = 'none';
-        canvasObj.style.display = 'block';
-        takePhotoBtn.style.display = 'none';
-        stopCamBtn.style.display = 'none';
-        startCamBtn.style.display = 'block';
-        startCamBtn.textContent = 'Retake Photo';
+        videoEl.style.display = 'none';
+        canvasEl.style.display = 'block';
+        placeholder.style.display = 'none';
+        photoBtn.style.display = 'none';
+        stopBtn.style.display = 'none';
+        startBtn.style.display = 'inline-flex';
+        startBtn.innerHTML = '<i class="fas fa-redo"></i> Ambil Ulang';
         fileInput.value = '';
-        document.getElementById('cam-status').textContent =
-          'Photo captured successfully! You can post now or retake.';
+        this.#setCamStatus('✅ Foto berhasil diambil! Klik "Post Story" untuk mengirim.');
       }
     });
 
     fileInput.addEventListener('change', () => {
-      // FIX Bug 3: Hentikan kamera jika masih aktif
       cameraHelper.stopCamera();
-      videoObj.style.display = 'none';
-      stopCamBtn.style.display = 'none';
-      takePhotoBtn.style.display = 'none';
-      startCamBtn.style.display = 'block';
-      startCamBtn.textContent = originalStartBtnText;
-
-      this.cameraBlob = null;
-      canvasObj.style.display = 'none';
-      document.getElementById('cam-status').textContent = 'Using uploaded file.';
+      videoEl.style.display = 'none';
+      canvasEl.style.display = 'none';
+      placeholder.style.display = 'flex';
+      stopBtn.style.display = 'none';
+      photoBtn.style.display = 'none';
+      startBtn.style.display = 'inline-flex';
+      startBtn.innerHTML = originalBtnText;
+      this.#cameraBlob = null;
+      this.#setCamStatus('Menggunakan file yang diunggah.');
     });
 
-    form.addEventListener('submit', async (e) => {
+    window.addEventListener('hashchange', () => cameraHelper.stopCamera(), { once: true });
+  }
+
+  stopCamera() {
+    cameraHelper.stopCamera();
+  }
+
+  #setCamStatus(text) {
+    document.getElementById('cam-status').textContent = text;
+  }
+
+  // ── View Methods: Form ───────────────────────────────────────────────────
+
+  getPhotoFile() {
+    if (this.#cameraBlob) {
+      return new File([this.#cameraBlob], 'camera_capture.jpg', { type: 'image/jpeg' });
+    }
+    const fileInput = document.getElementById('photo');
+    return fileInput.files.length > 0 ? fileInput.files[0] : null;
+  }
+
+  getFormData() {
+    return {
+      description: document.getElementById('description').value.trim(),
+      lat: document.getElementById('lat').value || null,
+      lon: document.getElementById('lon').value || null,
+    };
+  }
+
+  bindSubmit(handler) {
+    document.getElementById('add-story-form').addEventListener('submit', async (e) => {
       e.preventDefault();
-      msgDiv.style.display = 'none';
-
-      const description = document.getElementById('description').value;
-      const lat = document.getElementById('lat').value;
-      const lon = document.getElementById('lon').value;
-
-      let finalFile = null;
-
-      if (this.cameraBlob) {
-        finalFile = new File([this.cameraBlob], 'camera_capture.jpg', { type: 'image/jpeg' });
-      } else if (fileInput.files.length > 0) {
-        finalFile = fileInput.files[0];
-      }
-
-      if (!finalFile) {
-        msgDiv.textContent = 'Please provide a photo (Upload or Camera).';
-        msgDiv.style.display = 'block';
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = 'Posting...';
-
-      try {
-        const response = await StoryApi.addStory(
-          description,
-          finalFile,
-          lat ? parseFloat(lat) : null,
-          lon ? parseFloat(lon) : null
-        );
-
-        if (!response.error) {
-          // FIX Bug 1: Hentikan kamera sebelum navigasi
-          cameraHelper.stopCamera();
-          alert('Story successfully added!');
-          window.location.hash = '#/';
-        } else {
-          msgDiv.textContent = response.message;
-          msgDiv.style.display = 'block';
-        }
-      } catch (err) {
-        msgDiv.textContent = 'Network Error. Failed to post story.';
-        msgDiv.style.display = 'block';
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'Post Story';
-      }
+      await handler();
     });
+  }
 
-    window.addEventListener(
-      'hashchange',
-      () => {
-        cameraHelper.stopCamera();
-      },
-      { once: true }
-    );
+  // ── View Methods: Feedback ───────────────────────────────────────────────
+
+  setLoading(isLoading) {
+    const btn = document.getElementById('add-story-submit');
+    btn.disabled = isLoading;
+    btn.innerHTML = isLoading
+      ? '<i class="fas fa-spinner fa-spin"></i> Memposting...'
+      : '<i class="fas fa-paper-plane"></i> Post Story';
+  }
+
+  showError(message) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Gagal Memposting',
+      text: message,
+      confirmButtonColor: '#4f46e5',
+    });
+  }
+
+  async showSuccess(message) {
+    return Swal.fire({
+      icon: 'success',
+      title: 'Story Berhasil Diposting! 🎉',
+      text: message,
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  }
+
+  navigateTo(hash) {
+    window.location.hash = hash;
   }
 }

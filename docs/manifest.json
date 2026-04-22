@@ -1,0 +1,47 @@
+{
+  "name": "StoryApp",
+  "short_name": "StoryApp",
+  "description": "Bagikan momen terbaik Anda dengan dunia.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "./images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "https://placehold.co/1280x720?text=StoryApp+Homepage+Screenshot",
+      "type": "image/jpeg",
+      "sizes": "1280x720",
+      "form_factor": "wide"
+    },
+    {
+      "src": "https://placehold.co/720x1280?text=StoryApp+Mobile+Screenshot",
+      "type": "image/jpeg",
+      "sizes": "720x1280",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tambah Story",
+      "short_name": "Tambah",
+      "description": "Bagikan cerita baru",
+      "url": "/#/add-story",
+      "icons": [{ "src": "./images/logo.png", "sizes": "192x192" }]
+    }
+  ]
+}

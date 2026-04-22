@@ -9,9 +9,17 @@ export default class AddStoryPage {
   async render() {
     return `
       <div class="view-container">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="breadcrumb-container" style="margin-bottom: 20px;">
+          <a href="#/" class="breadcrumb-link"><i class="fas fa-home"></i> Home</a>
+          <span class="breadcrumb-separator"><i class="fas fa-chevron-right"></i></span>
+          <span class="breadcrumb-current" aria-current="page">Tambah Story</span>
+        </nav>
+
         <h2 class="content-title text-center">
           <i class="fas fa-plus-circle"></i> Tambah Story Baru
         </h2>
+
 
         <div class="auth-wrapper" style="max-width: 860px;">
           <form id="add-story-form" novalidate>

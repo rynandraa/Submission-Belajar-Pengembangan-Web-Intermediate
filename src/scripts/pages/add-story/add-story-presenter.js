@@ -48,7 +48,7 @@ export default class AddStoryPresenter {
 
       if (!response.error) {
         this.#view.stopCamera();
-        await this.#view.showSuccess('Story Anda telah berhasil dibagikan kepada dunia!');
+        await this.#view.showSuccess('Story Anda telah berhasil dibagikan!');
         this.#view.navigateTo('#/');
       } else {
         this.#view.showError(response.message);

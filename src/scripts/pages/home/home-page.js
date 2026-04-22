@@ -7,9 +7,16 @@ export default class HomePage {
   async render() {
     return `
       <div class="view-container">
-        <h2 class="content-title">
-          <i class="fas fa-book-open"></i> Dashboard Stories
-        </h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
+          <h2 class="content-title" style="margin-bottom: 0;">
+            <i class="fas fa-book-open"></i> Dashboard Stories
+          </h2>
+          <div>
+            <button id="push-toggle-btn" class="btn btn-secondary" style="font-size: 0.85rem;">
+              <i class="fas fa-bell"></i> <span id="push-toggle-text">Enable Notifications</span>
+            </button>
+          </div>
+        </div>
 
         <!-- Peta interaktif dengan layer control -->
         <div
@@ -20,11 +27,20 @@ export default class HomePage {
           role="application"
         ></div>
 
+        <!-- Tool bar for interactivity (IndexedDB Skilled Requirement) -->
+        <div class="toolbar" style="display: flex; gap: 12px; margin-top: 24px; max-width: 500px;">
+          <input type="text" id="search-input" class="form-control" placeholder="Cari nama pembuat story..." />
+          <select id="sort-select" class="form-control" style="width: auto;">
+            <option value="newest">Terbaru</option>
+            <option value="oldest">Terlama</option>
+          </select>
+        </div>
+
         <!-- Loader -->
         <div id="loader" class="loader"></div>
 
         <!-- Daftar story -->
-        <div id="story-list" class="container" style="margin-top: 32px; display: none;"></div>
+        <div id="story-list" class="container" style="margin-top: 24px; display: none;"></div>
       </div>
     `;
   }
@@ -119,16 +135,19 @@ export default class HomePage {
 
     return `
       <article class="story-card" tabindex="0" aria-label="Story dari ${story.name}">
-        <img src="${imgUrl}" alt="Foto yang dibagikan oleh ${story.name}" loading="lazy">
-        <div class="story-card-body">
-          <h3 class="story-card-title">
-            <i class="fas fa-user-circle"></i> ${story.name}
-          </h3>
-          <time class="story-card-date" datetime="${story.createdAt}">
-            <i class="fas fa-calendar-alt"></i> ${dateStr}
-          </time>
-          <p class="story-card-desc">${story.description}</p>
-        </div>
+        <a href="#/detail/${story.id}" class="story-card-link-wrapper" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+          <img src="${imgUrl}" alt="Foto yang dibagikan oleh ${story.name}" loading="lazy">
+          <div class="story-card-body">
+            <h3 class="story-card-title">
+              <i class="fas fa-user-circle"></i> ${story.name}
+            </h3>
+            <time class="story-card-date" datetime="${story.createdAt}">
+              <i class="fas fa-calendar-alt"></i> ${dateStr}
+            </time>
+            <p class="story-card-desc" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${story.description}</p>
+            <span class="btn btn-sm btn-block" style="margin-top: auto; display: inline-block; width: 100%;">Lihat Detail</span>
+          </div>
+        </a>
       </article>
     `;
   }

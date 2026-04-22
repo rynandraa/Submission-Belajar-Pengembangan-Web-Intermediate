@@ -1,5 +1,5 @@
 import { sessionHelper } from '../utils/session-storage.js';
-
+import { idbHelper } from './idb-helper.js';
 const BASE_URL = 'https://story-api.dicoding.dev/v1';
 
 export const StoryApi = {
@@ -22,12 +22,31 @@ export const StoryApi = {
   },
 
   async getAllStories(location = 1) {
-    // 1 to include location
     const token = sessionHelper.getToken();
-    const response = await fetch(`${BASE_URL}/stories?location=${location}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return response.json();
+    try {
+      const response = await fetch(`${BASE_URL}/stories?location=${location}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      
+      // Cache to IDB if success
+      if (!data.error && data.listStory) {
+        await idbHelper.putStoriesCache(data.listStory);
+      }
+      return data;
+    } catch (error) {
+      // Offline fallback: Use IDB
+      console.warn('Network error, fetching from IndexedDB cache...');
+      const cachedStories = await idbHelper.getAllStoriesCache();
+      if (cachedStories && cachedStories.length > 0) {
+        return {
+          error: false,
+          message: 'Fetched from cache',
+          listStory: cachedStories
+        };
+      }
+      throw error;
+    }
   },
 
   async addStory(description, photo, lat, lon) {
@@ -42,10 +61,44 @@ export const StoryApi = {
 
     // Dicoding specification: Add guest form data if needed (it is authenticated API mostly so token should work)
 
-    const response = await fetch(`${BASE_URL}/stories`, {
-      method: 'POST',
+    try {
+      const response = await fetch(`${BASE_URL}/stories`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      return response.json();
+    } catch (error) {
+      console.warn('Network error, pushing to sync queue...');
+      await idbHelper.putSyncQueue({
+        id: Date.now(), // Generate local ID
+        description,
+        photo, // Assuming Blob/File can be stored in IDB (it can be)
+        lat,
+        lon
+      });
+
+      // Register background sync if supported
+      if ('serviceWorker' in navigator && 'SyncManager' in window) {
+        try {
+          const swRegistration = await navigator.serviceWorker.ready;
+          await swRegistration.sync.register('sync-add-story');
+        } catch (err) {
+          console.error('Failed to register background sync', err);
+        }
+      }
+
+      return {
+        error: false,
+        message: 'Story is saved offline and will be uploaded automatically when online.'
+      };
+    }
+  },
+
+  async getStoryDetail(id) {
+    const token = sessionHelper.getToken();
+    const response = await fetch(`${BASE_URL}/stories/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
-      body: formData,
     });
     return response.json();
   },

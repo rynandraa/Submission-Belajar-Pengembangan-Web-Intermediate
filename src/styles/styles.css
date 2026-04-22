@@ -18,7 +18,9 @@
   --danger-color: #ef4444;
   --danger-hover: #dc2626;
 
-  --border-color: #e2e8f0;
+  /* Diperlembut sedikit agar tidak terlalu kaku namun tetap terlihat */
+  --border-color: #cbd5e1;
+  
   --content-padding: 24px;
   --focus-ring: 0 0 0 3px rgba(79, 70, 229, 0.35);
   --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
@@ -38,7 +40,16 @@
 body {
   margin: 0;
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: var(--bg-color);
+  
+  /* Gradasi Biru Lembut Blur Premium */
+  background-color: #f4f9ff; 
+  background-image: 
+    radial-gradient(circle at 85% 15%, rgba(100, 149, 237, 0.25) 0%, transparent 50%),
+    radial-gradient(circle at 15% 85%, rgba(138, 114, 255, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, transparent 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  
   color: var(--primary-text);
   line-height: 1.6;
   min-height: 100vh;
@@ -249,6 +260,11 @@ body {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: var(--focus-ring);
+}
+
+select.form-control {
+  padding-right: 32px; /* Fix for dropdown icon overlapping text */
+  cursor: pointer;
 }
 
 textarea.form-control {
@@ -464,4 +480,103 @@ textarea.form-control {
 }
 .mb-2 {
   margin-bottom: 8px;
+}
+
+/* ── Detail Page ─────────────────────────────────────────────────────────── */
+.breadcrumb-container {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  margin-bottom: 24px;
+}
+.breadcrumb-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+.breadcrumb-separator {
+  margin: 0 8px;
+  font-size: 0.8rem;
+}
+.breadcrumb-current {
+  color: var(--primary-text);
+  font-weight: 600;
+}
+
+.detail-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .detail-card {
+    flex-direction: row;
+  }
+}
+
+.detail-image-container {
+  flex: 1;
+  max-width: 100%;
+}
+@media (min-width: 768px) {
+  .detail-image-container {
+    max-width: 50%;
+  }
+}
+
+.detail-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.detail-info {
+  flex: 1;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-name {
+  font-size: 1.5rem;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--primary-text);
+}
+.detail-name i {
+  color: var(--primary-color);
+}
+
+.detail-date {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-desc {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--primary-text);
+  margin: 0;
+}
+
+/* Add generic button variant */
+.btn-secondary {
+  background-color: var(--secondary-text);
+}
+.btn-secondary:hover {
+  background-color: #475569;
 }

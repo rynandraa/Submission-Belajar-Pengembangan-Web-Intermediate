@@ -31,3 +31,10 @@ export function getActiveRoute() {
 
   return constructRouteFromSegments(pathSegments);
 }
+
+export function getIdFromActiveUrl() {
+  const pathname = getActivePathname();
+  const pathSegments = extractPathnameSegments(pathname);
+
+  return pathSegments.id;
+}

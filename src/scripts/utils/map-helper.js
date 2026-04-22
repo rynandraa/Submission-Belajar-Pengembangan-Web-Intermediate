@@ -38,10 +38,12 @@ export const mapHelper = {
     storiesArray.forEach((story) => {
       if (story.lat && story.lon) {
         const marker = L.marker([story.lat, story.lon]).addTo(this.map);
+        const imgUrl = story.photoUrl || 'https://placehold.co/400x200?text=No+Image';
         marker.bindPopup(`
-          <div style="font-family: inherit;">
+          <div style="font-family: inherit; text-align: center;">
             <b style="font-size:14px;">${story.name}</b><br>
-            <img src="${story.photoUrl}" alt="${story.name}" style="width:100px; height:auto; border-radius:4px; margin-top:8px;">
+            <img src="${imgUrl}" alt="${story.name}" style="width:100px; height:auto; border-radius:4px; margin: 8px 0;">
+            ${story.id ? `<br><a href="#/detail/${story.id}" class="btn btn-sm" style="display:inline-block; margin-top:4px; padding: 6px 12px; text-decoration: none; font-size: 0.85rem; color: #ffffff !important;">Lihat Detail</a>` : ''}
           </div>
         `);
         this.markers.push(marker);
@@ -51,7 +53,8 @@ export const mapHelper = {
     // Fit bounds if we have markers
     if (this.markers.length > 0) {
       const group = new L.featureGroup(this.markers);
-      this.map.fitBounds(group.getBounds(), { padding: [20, 20] });
+      // PENTING: Tambahkan maxZoom agar tidak terlalu membesar (zoom in terlalu ekstrem) saat hanya ada 1 marker (seperti di Halaman Detail).
+      this.map.fitBounds(group.getBounds(), { padding: [30, 30], maxZoom: 14 });
     }
   },
 

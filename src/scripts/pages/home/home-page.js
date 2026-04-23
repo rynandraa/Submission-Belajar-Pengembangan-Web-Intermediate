@@ -27,20 +27,19 @@ export default class HomePage {
           role="application"
         ></div>
 
-        <!-- Tool bar for interactivity (IndexedDB Skilled Requirement) -->
-        <div class="toolbar" style="display: flex; gap: 12px; margin-top: 24px; max-width: 600px; align-items: center;">
-          <div style="flex: 1;">
-            <label for="search-input" class="sr-only">Cari nama pembuat story</label>
+        <section class="toolbar">
+          <div class="search-group">
+            <label for="search-input" class="toolbar-label">Cari nama pembuat story</label>
             <input type="text" id="search-input" class="form-control" placeholder="Cari nama pembuat story..." />
           </div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <label for="sort-select" style="white-space: nowrap; font-size: 0.9rem;">Urutkan:</label>
-            <select id="sort-select" class="form-control" style="width: auto;">
+          <div class="sort-group">
+            <label for="sort-select" class="toolbar-label">Urutkan:</label>
+            <select id="sort-select" class="form-control">
               <option value="newest">Terbaru</option>
               <option value="oldest">Terlama</option>
             </select>
           </div>
-        </div>
+        </section>
 
         <!-- Section for Offline Pending Stories -->
         <div id="pending-stories-container" style="display: none; margin-top: 24px;"></div>

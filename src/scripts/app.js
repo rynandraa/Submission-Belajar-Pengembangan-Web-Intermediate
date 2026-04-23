@@ -4,6 +4,7 @@ import { sessionHelper } from './utils/session-storage.js';
 
 export default class App {
   #content;
+  #isRendering = false;
 
   constructor({ content }) {
     this.#content = content;
@@ -11,6 +12,8 @@ export default class App {
   }
 
   async renderPage() {
+    if (this.#isRendering) return;
+
     const routeName = getActiveRoute();
     const route = routes[routeName];
 
@@ -19,16 +22,23 @@ export default class App {
       return;
     }
 
-    // Get presenter instance
+    this.#isRendering = true;
     const page = route();
 
-    // Document View Transitions
-    if (!document.startViewTransition) {
-      await this.#renderComponent(page);
-    } else {
-      document.startViewTransition(async () => {
+    try {
+      if (!document.startViewTransition) {
         await this.#renderComponent(page);
-      });
+      } else {
+        const transition = document.startViewTransition(async () => {
+          await this.#renderComponent(page);
+        });
+
+        // Suppress "Transition was skipped" warning from bubbling up
+        transition.finished.catch(() => {});
+        await transition.finished.catch(() => {});
+      }
+    } finally {
+      this.#isRendering = false;
     }
   }
 

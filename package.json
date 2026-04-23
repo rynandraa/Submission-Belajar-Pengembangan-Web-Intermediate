@@ -10,7 +10,7 @@
     "format": "prettier --write \"src/**/*.{js,html,css}\""
   },
   "keywords": [],
-  "author": "YOUR_NAME <yourmail@mail.com>",
+  "author": "RYAN_ANDRAYADI_KUSYANTO <ryanandrayadi0@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",

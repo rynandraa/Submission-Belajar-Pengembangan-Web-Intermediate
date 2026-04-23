@@ -30,36 +30,22 @@ export default class HomePresenter {
   }
   
   async #initPushManager() {
-    const toggleBtn = document.getElementById('push-toggle-btn');
-    const toggleText = document.getElementById('push-toggle-text');
-    if (!toggleBtn) return;
-
     try {
       const currentSub = await PushManager.getSubscription();
-      const updateUI = (isSubscribed) => {
-        if (isSubscribed) {
-          toggleText.textContent = 'Disable Notifications';
-          toggleBtn.classList.remove('btn-secondary');
-          toggleBtn.classList.add('btn-danger');
-        } else {
-          toggleText.textContent = 'Enable Notifications';
-          toggleBtn.classList.remove('btn-danger');
-          toggleBtn.classList.add('btn-secondary');
-        }
-      };
-      updateUI(!!currentSub);
+      this.#view.updatePushToggleUI(!!currentSub);
 
-      toggleBtn.addEventListener('click', async () => {
+      this.#view.bindPushToggle(async () => {
         try {
           const sub = await PushManager.getSubscription();
           if (sub) {
             await PushManager.unsubscribe();
-            updateUI(false);
+            this.#view.updatePushToggleUI(false);
           } else {
             await PushManager.subscribe();
-            updateUI(true);
+            this.#view.updatePushToggleUI(true);
           }
         } catch (e) {
+          console.error('Push toggle error:', e);
           this.#view.showError('Gagal mengatur Push Notification. Izin mungkin diblokir.');
         }
       });

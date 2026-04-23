@@ -44,7 +44,9 @@ export default class App {
     const guestRelated = document.querySelectorAll('.guest-related');
     const logoutBtn = document.querySelector('#logout-btn');
 
-    if (sessionHelper.isLoggedIn()) {
+    const isLoggedIn = sessionHelper.isLoggedIn();
+
+    if (isLoggedIn) {
       authRelated.forEach((el) => el.classList.remove('d-none'));
       guestRelated.forEach((el) => el.classList.add('d-none'));
     } else {
@@ -52,13 +54,14 @@ export default class App {
       guestRelated.forEach((el) => el.classList.remove('d-none'));
     }
 
-    if (logoutBtn) {
+    if (logoutBtn && !logoutBtn.dataset.listenerAdded) {
       logoutBtn.addEventListener('click', (e) => {
         e.preventDefault();
         sessionHelper.removeToken();
+        this.#initAuthUI();
         window.location.hash = '#/login';
-        this.#initAuthUI(); // Refresh UI
       });
+      logoutBtn.dataset.listenerAdded = 'true';
     }
   }
 }

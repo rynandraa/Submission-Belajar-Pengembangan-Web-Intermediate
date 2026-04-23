@@ -18,43 +18,59 @@ function urlB64ToUint8Array(base64String) {
 export const PushManager = {
   async getSubscription() {
     if (!('serviceWorker' in navigator)) return null;
-    const registration = await navigator.serviceWorker.ready;
-    if (!registration.pushManager) return null;
-    return await registration.pushManager.getSubscription();
+    
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (!registration || !registration.pushManager) return null;
+      return await registration.pushManager.getSubscription();
+    } catch (err) {
+      console.error('Error getting push subscription:', err);
+      return null;
+    }
   },
 
   async subscribe() {
-    if (!('serviceWorker' in navigator)) return null;
+    if (!('serviceWorker' in navigator)) {
+      throw new Error('Service Worker tidak didukung di browser ini.');
+    }
+
     const registration = await navigator.serviceWorker.ready;
+    if (!registration.pushManager) {
+      throw new Error('Push Manager tidak didukung di browser ini.');
+    }
     
-    // Request permission first
+    // Request permission
     const permission = await Notification.requestPermission();
     if (permission !== 'granted') {
-      throw new Error('Notifikasi tidak diizinkan oleh pengguna.');
+      throw new Error('Izin notifikasi ditolak. Harap aktifkan izin di pengaturan browser Anda.');
     }
 
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlB64ToUint8Array(PUBLIC_KEY)
-    });
-
-    // Send subscription to backend
     try {
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlB64ToUint8Array(PUBLIC_KEY)
+      });
+
+      // Send subscription to backend
       await StoryApi.subscribeNotification(subscription);
       console.log('Push Notification Subscribed and sent to server');
+      return subscription;
     } catch (err) {
-      console.error('Failed to send subscription to server:', err);
+      console.error('Gagal melakukan subscribe push notification:', err);
+      throw err;
     }
-
-    return subscription;
   },
 
   async unsubscribe() {
-    const subscription = await this.getSubscription();
-    if (subscription) {
-      const result = await subscription.unsubscribe();
-      console.log('Push Notification Unsubscribed');
-      return result;
+    try {
+      const subscription = await this.getSubscription();
+      if (subscription) {
+        await subscription.unsubscribe();
+        console.log('Push Notification Unsubscribed');
+        return true;
+      }
+    } catch (err) {
+      console.error('Error unsubscribing:', err);
     }
     return false;
   }

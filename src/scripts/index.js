@@ -8,6 +8,19 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import Swal from 'sweetalert2';
+import { Workbox } from 'workbox-window';
+
+// Fix Leaflet Default Icon issue with Webpack
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
 
 // Set globals for components that expect them
 window.Swal = Swal;
@@ -19,6 +32,12 @@ import { idbHelper } from './data/idb-helper.js';
 document.addEventListener('DOMContentLoaded', async () => {
   const content = document.querySelector('#content');
   const app = new App({ content });
+
+  // Jika hash kosong, arahkan ke #/ agar router berjalan konsisten
+  if (!window.location.hash) {
+    window.location.hash = '#/';
+  }
+
   await app.renderPage();
 
   window.addEventListener('hashchange', async () => {
@@ -28,8 +47,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   // PWA & Service Worker Registration
   if ('serviceWorker' in navigator) {
     try {
-      const { Workbox } = require('workbox-window');
-      const wb = new Workbox('/sw.js');
+      // Gunakan path relatif agar bekerja di sub-direktori (misal: GitHub Pages)
+      const wb = new Workbox('./sw.js');
 
       // Listen for message from service worker for background sync
       navigator.serviceWorker.addEventListener('message', async (event) => {

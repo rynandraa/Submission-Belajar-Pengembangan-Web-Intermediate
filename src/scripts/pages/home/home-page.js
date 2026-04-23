@@ -153,6 +153,29 @@ export default class HomePage {
     marker.openPopup();
     document.getElementById('story-map').scrollIntoView({ behavior: 'smooth' });
   }
+  
+  updatePushToggleUI(isSubscribed) {
+    const toggleBtn = document.getElementById('push-toggle-btn');
+    const toggleText = document.getElementById('push-toggle-text');
+    if (!toggleBtn || !toggleText) return;
+
+    if (isSubscribed) {
+      toggleText.textContent = 'Disable Notifications';
+      toggleBtn.classList.remove('btn-secondary');
+      toggleBtn.classList.add('btn-danger');
+    } else {
+      toggleText.textContent = 'Enable Notifications';
+      toggleBtn.classList.remove('btn-danger');
+      toggleBtn.classList.add('btn-secondary');
+    }
+  }
+
+  bindPushToggle(handler) {
+    const toggleBtn = document.getElementById('push-toggle-btn');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', handler);
+    }
+  }
 
   bindStoryCardClick(handler) {
     const cards = document.querySelectorAll('.story-card');

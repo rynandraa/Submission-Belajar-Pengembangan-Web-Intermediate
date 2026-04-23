@@ -112,9 +112,9 @@ export default class HomePage {
 
     container.innerHTML = `
       <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-        <h3 style="color: #92400e; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-          <i class="fas fa-clock"></i> Stories Menunggu Sinkronisasi (Offline)
-        </h3>
+        <h2 style="color: #92400e; font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+          <i class="fas fa-clock"></i> Stories Menunggu Sinkronisasi (${pendingStories.length})
+        </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px;">
           ${pendingStories
             .map(
@@ -209,9 +209,9 @@ export default class HomePage {
         <a href="#/detail/${story.id}" class="story-card-link-wrapper" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
           <img src="${imgUrl}" alt="Foto yang dibagikan oleh ${story.name}" loading="lazy">
           <div class="story-card-body">
-            <h3 class="story-card-title">
+            <h2 class="story-card-title">
               <i class="fas fa-user-circle"></i> ${story.name}
-            </h3>
+            </h2>
             <time class="story-card-date" datetime="${story.createdAt}">
               <i class="fas fa-calendar-alt"></i> ${dateStr}
             </time>

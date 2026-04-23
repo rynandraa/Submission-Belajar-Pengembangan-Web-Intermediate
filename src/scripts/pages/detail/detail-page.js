@@ -27,9 +27,9 @@ export default class DetailPage {
             
             <!-- Tambahkan pembatas (border-right) memisahkan kolom gambar dan info -->
             <div class="detail-image-container" style="padding: 24px; flex: 1 1 300px; max-width: 100%; border-right: 1px solid var(--border-color);">
-              <h3 style="margin: 0 0 16px 0; font-size: 1.1rem; color: var(--secondary-text); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; display: inline-block;">
+              <h2 style="margin: 0 0 16px 0; font-size: 1.1rem; color: var(--secondary-text); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; display: inline-block;">
                 <i class="fas fa-image"></i> Foto Upload
-              </h3>
+              </h2>
               <div style="border-radius: 12px; padding: 12px; background: #f8fafc;">
                 <img id="detail-image" src="" alt="Story Image" loading="lazy" style="width: 100%; height: auto; border-radius: 6px; display: block; object-fit: contain; max-height: 500px; box-shadow: var(--shadow-sm);">
               </div>
@@ -37,9 +37,9 @@ export default class DetailPage {
             
             <div class="detail-info-wrapper" style="flex: 1 1 350px; display: flex; flex-direction: column;">
               <div class="detail-info" style="padding: 24px; flex: 1;">
-                <h3 style="margin: 0 0 16px 0; font-size: 1.1rem; color: var(--secondary-text); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; display: inline-block;">
+                <h2 style="margin: 0 0 16px 0; font-size: 1.1rem; color: var(--secondary-text); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; display: inline-block;">
                   <i class="fas fa-list-alt"></i> Informasi Detail
-                </h3>
+                </h2>
                 <!-- Penanda kotak informasi diperjelas sedikit -->
                 <div style="border-radius: 12px; padding: 24px; background-color: #ffffff; box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);">
                   <h3 class="detail-name" id="detail-name" style="margin-top: 0;">
@@ -55,9 +55,9 @@ export default class DetailPage {
               
               <!-- Map Container for specific story -->
               <div id="detail-map-wrapper" style="display: none; padding: 0 24px 24px 24px;">
-                <h3 style="margin: 0 0 16px 0; font-size: 1.1rem; color: var(--secondary-text); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; display: inline-block;">
+                <h2 style="margin: 0 0 16px 0; font-size: 1.1rem; color: var(--secondary-text); border-bottom: 2px solid var(--primary-color); padding-bottom: 8px; display: inline-block;">
                   <i class="fas fa-map-marker-alt"></i> Lokasi Peta
-                </h3>
+                </h2>
                 <div
                   class="map-container"
                   id="detail-map"

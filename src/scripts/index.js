@@ -33,9 +33,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   const content = document.querySelector('#content');
   const app = new App({ content });
 
+  // Jika hash kosong, arahkan ke #/ agar router berjalan konsisten
+  if (!window.location.hash) {
+    window.location.hash = '#/';
+  }
+
+  await app.renderPage();
+
+  window.addEventListener('hashchange', async () => {
+    await app.renderPage();
+  });
+
   // PWA & Service Worker Registration
   if ('serviceWorker' in navigator) {
     try {
+      // Gunakan path relatif agar bekerja di sub-direktori (misal: GitHub Pages)
       const wb = new Workbox('./sw.js');
 
       // Listen for message from service worker for background sync
@@ -58,15 +70,5 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (err) {
       console.error('Service Worker registration failed:', err);
     }
-  }
-
-  // Handle Initial Route (Stabilized to avoid double render)
-  const render = () => app.renderPage();
-  window.addEventListener('hashchange', render);
-
-  if (!window.location.hash || window.location.hash === '#') {
-    window.location.hash = '#/';
-  } else {
-    render();
   }
 });

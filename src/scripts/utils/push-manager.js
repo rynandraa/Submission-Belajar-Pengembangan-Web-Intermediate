@@ -1,3 +1,5 @@
+import { StoryApi } from '../data/api';
+
 const PUBLIC_KEY = 'BCCs2eonMI-6H2ctvFaWg-UYdDv387Vno_bzUzALpB442r2lCnsHmtrx8biyPi_E-1fSGABK_Qs_GlvPoJJqxbk';
 
 function urlB64ToUint8Array(base64String) {
@@ -36,9 +38,14 @@ export const PushManager = {
       applicationServerKey: urlB64ToUint8Array(PUBLIC_KEY)
     });
 
-    // In a real app, send subscription to backend.
-    // For this dicoding task, we just need to subscribe and log it
-    console.log('Push Notification Subscribed:', JSON.stringify(subscription));
+    // Send subscription to backend
+    try {
+      await StoryApi.subscribeNotification(subscription);
+      console.log('Push Notification Subscribed and sent to server');
+    } catch (err) {
+      console.error('Failed to send subscription to server:', err);
+    }
+
     return subscription;
   },
 

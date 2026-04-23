@@ -11,7 +11,7 @@ export default class RegisterPage {
             <div class="auth-icon-wrap">
               <i class="fas fa-user-plus"></i>
             </div>
-            <h2 class="content-title text-center">Daftar Akun</h2>
+            <h1 class="content-title text-center">Daftar Akun</h1>
             <p class="auth-subtitle">Bergabung dengan komunitas StoryApp</p>
           </div>
 

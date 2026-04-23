@@ -14,9 +14,9 @@ export default class DetailPage {
           <span class="breadcrumb-current" aria-current="page">Detail Story</span>
         </nav>
 
-        <h2 class="content-title">
+        <h1 class="content-title">
           <i class="fas fa-info-circle"></i> Detail Story
-        </h2>
+        </h1>
 
         <!-- Loader -->
         <div id="loader" class="loader"></div>

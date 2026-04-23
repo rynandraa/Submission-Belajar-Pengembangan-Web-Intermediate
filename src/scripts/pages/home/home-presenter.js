@@ -1,6 +1,7 @@
 import { StoryApi } from '../../data/api.js';
 import { sessionHelper } from '../../utils/session-storage.js';
 import { PushManager } from '../../utils/push-manager.js';
+import { idbHelper } from '../../data/idb-helper.js';
 
 export default class HomePresenter {
   #view;
@@ -22,6 +23,7 @@ export default class HomePresenter {
     setTimeout(async () => {
       this.#view.initMap([-6.2, 106.816666]);
       await this.#loadStories();
+      await this.#loadPendingStories();
       this.#initInteractivity();
       this.#initPushManager();
     }, 100);
@@ -132,6 +134,15 @@ export default class HomePresenter {
           this.#view.focusMapMarker(markers[index]);
         }
       });
+    }
+  }
+
+  async #loadPendingStories() {
+    try {
+      const pending = await idbHelper.getAllSyncQueue();
+      this.#view.showPendingStories(pending);
+    } catch (e) {
+      console.warn('Failed to load pending stories', e);
     }
   }
 }

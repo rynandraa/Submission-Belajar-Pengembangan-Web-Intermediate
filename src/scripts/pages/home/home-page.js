@@ -8,9 +8,9 @@ export default class HomePage {
     return `
       <div class="view-container">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
-          <h2 class="content-title" style="margin-bottom: 0;">
+          <h1 class="content-title" style="margin-bottom: 0;">
             <i class="fas fa-book-open"></i> Dashboard Stories
-          </h2>
+          </h1>
           <div>
             <button id="push-toggle-btn" class="btn btn-secondary" style="font-size: 0.85rem;">
               <i class="fas fa-bell"></i> <span id="push-toggle-text">Enable Notifications</span>
@@ -28,13 +28,22 @@ export default class HomePage {
         ></div>
 
         <!-- Tool bar for interactivity (IndexedDB Skilled Requirement) -->
-        <div class="toolbar" style="display: flex; gap: 12px; margin-top: 24px; max-width: 500px;">
-          <input type="text" id="search-input" class="form-control" placeholder="Cari nama pembuat story..." />
-          <select id="sort-select" class="form-control" style="width: auto;">
-            <option value="newest">Terbaru</option>
-            <option value="oldest">Terlama</option>
-          </select>
+        <div class="toolbar" style="display: flex; gap: 12px; margin-top: 24px; max-width: 600px; align-items: center;">
+          <div style="flex: 1;">
+            <label for="search-input" class="sr-only">Cari nama pembuat story</label>
+            <input type="text" id="search-input" class="form-control" placeholder="Cari nama pembuat story..." />
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <label for="sort-select" style="white-space: nowrap; font-size: 0.9rem;">Urutkan:</label>
+            <select id="sort-select" class="form-control" style="width: auto;">
+              <option value="newest">Terbaru</option>
+              <option value="oldest">Terlama</option>
+            </select>
+          </div>
         </div>
+
+        <!-- Section for Offline Pending Stories -->
+        <div id="pending-stories-container" style="display: none; margin-top: 24px;"></div>
 
         <!-- Loader -->
         <div id="loader" class="loader"></div>
@@ -93,6 +102,46 @@ export default class HomePage {
 
   addMapMarkers(stories) {
     mapHelper.addMarkers(stories);
+  }
+
+  showPendingStories(pendingStories) {
+    const container = document.getElementById('pending-stories-container');
+    if (!pendingStories || pendingStories.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+
+    container.innerHTML = `
+      <div style="background: #fffbeb; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+        <h3 style="color: #92400e; font-size: 1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-clock"></i> Stories Menunggu Sinkronisasi (Offline)
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px;">
+          ${pendingStories
+            .map(
+              (s) => `
+            <div style="background: white; border: 1px solid #e5e7eb; border-radius: 6px; padding: 10px; display: flex; gap: 10px; align-items: center;">
+              <div style="width: 50px; height: 50px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                ${
+                  s.photo
+                    ? `<img src="${URL.createObjectURL(s.photo)}" style="width: 100%; height: 100%; object-fit: cover;">`
+                    : '<i class="fas fa-image text-gray-400"></i>'
+                }
+              </div>
+              <div style="flex: 1; min-width: 0;">
+                <p style="font-size: 0.85rem; font-weight: 500; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${
+                  s.description
+                }</p>
+                <span style="font-size: 0.75rem; color: #6b7280;">Akan di-upload otomatis</span>
+              </div>
+            </div>
+          `,
+            )
+            .join('')}
+        </div>
+      </div>
+    `;
+    container.style.display = 'block';
   }
 
   getMapMarkers() {

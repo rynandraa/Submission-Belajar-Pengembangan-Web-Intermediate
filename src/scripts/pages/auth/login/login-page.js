@@ -11,7 +11,7 @@ export default class LoginPage {
             <div class="auth-icon-wrap">
               <i class="fas fa-sign-in-alt"></i>
             </div>
-            <h2 class="content-title text-center">Login</h2>
+            <h1 class="content-title text-center">Login</h1>
             <p class="auth-subtitle">Masuk ke akun StoryApp Anda</p>
           </div>
 

@@ -102,4 +102,17 @@ export const StoryApi = {
     });
     return response.json();
   },
+
+  async subscribeNotification(subscription) {
+    const token = sessionHelper.getToken();
+    const response = await fetch(`${BASE_URL}/notifications/subscribe`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(subscription),
+    });
+    return response.json();
+  },
 };

@@ -16,9 +16,9 @@ export default class AddStoryPage {
           <span class="breadcrumb-current" aria-current="page">Tambah Story</span>
         </nav>
 
-        <h2 class="content-title text-center">
+        <h1 class="content-title text-center">
           <i class="fas fa-plus-circle"></i> Tambah Story Baru
-        </h2>
+        </h1>
 
 
         <div class="auth-wrapper" style="max-width: 860px;">

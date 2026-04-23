@@ -2,6 +2,17 @@ import App from './app.js';
 import '../styles/styles.css';
 import '../styles/view-transitions.css';
 import '../styles/responsive.css';
+
+// NPM Imports for Libraries
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import Swal from 'sweetalert2';
+
+// Set globals for components that expect them
+window.Swal = Swal;
+window.L = L;
+
 import { StoryApi } from './data/api.js';
 import { idbHelper } from './data/idb-helper.js';
 

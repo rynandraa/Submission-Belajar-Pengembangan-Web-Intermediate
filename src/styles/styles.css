@@ -208,6 +208,12 @@ body {
   outline: none;
   box-shadow: var(--focus-ring);
 }
+.btn i {
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .btn-block {
   width: 100%;
 }
@@ -605,6 +611,20 @@ textarea.form-control {
   margin-bottom: 6px;
   font-size: 0.85rem;
   color: var(--secondary-text);
+}
+.home-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.home-header-action {
+  margin-left: auto;
+}
+.saved-empty-btn i {
+  font-size: 0.9rem;
+  transform: translateY(-0.5px);
 }
 
 @media (max-width: 600px) {

@@ -3,6 +3,7 @@ import LoginPage from '../pages/auth/login/login-page.js';
 import RegisterPage from '../pages/auth/register/register-page.js';
 import AddStoryPage from '../pages/add-story/add-story-page.js';
 import DetailPage from '../pages/detail/detail-page.js';
+import SavedPage from '../pages/saved/saved-page.js';
 
 const routes = {
   '/': () => new HomePage(),
@@ -10,6 +11,7 @@ const routes = {
   '/register': () => new RegisterPage(),
   '/add-story': () => new AddStoryPage(),
   '/detail/:id': () => new DetailPage(),
+  '/saved': () => new SavedPage(),
 };
 
 export default routes;

@@ -23,14 +23,14 @@
   ],
   "screenshots": [
     {
-      "src": "https://placehold.co/1280x720?text=StoryApp+Homepage+Screenshot",
-      "type": "image/jpeg",
+      "src": "./images/screenshot-desktop.png",
+      "type": "image/svg+xml",
       "sizes": "1280x720",
       "form_factor": "wide"
     },
     {
-      "src": "https://placehold.co/720x1280?text=StoryApp+Mobile+Screenshot",
-      "type": "image/jpeg",
+      "src": "./images/screenshot-mobile.png",
+      "type": "image/svg+xml",
       "sizes": "720x1280",
       "form_factor": "narrow"
     }

@@ -7,11 +7,11 @@ export default class HomePage {
   async render() {
     return `
       <div class="view-container">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; margin-bottom: 24px;">
-          <h1 class="content-title" style="margin-bottom: 0;">
+        <div class="home-header-row">
+          <h1 class="content-title" style="margin-bottom: 0; width: auto; grid-column: auto;">
             <i class="fas fa-book-open"></i> Dashboard Stories
           </h1>
-          <div>
+          <div class="home-header-action">
             <button id="push-toggle-btn" class="btn btn-secondary" style="font-size: 0.85rem;">
               <i class="fas fa-bell"></i> <span id="push-toggle-text">Enable Notifications</span>
             </button>
@@ -89,9 +89,9 @@ export default class HomePage {
     container.style.display = 'block';
   }
 
-  showStories(stories) {
+  showStories(stories, favoriteIds = new Set()) {
     const container = document.getElementById('story-list');
-    container.innerHTML = stories.map((s) => this.#createStoryCard(s)).join('');
+    container.innerHTML = stories.map((s) => this.#createStoryCard(s, favoriteIds.has(s.id))).join('');
     container.style.display = 'grid';
   }
 
@@ -123,7 +123,7 @@ export default class HomePage {
               <div style="width: 50px; height: 50px; background: #f3f4f6; border-radius: 4px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
                 ${
                   s.photo
-                    ? `<img src="${URL.createObjectURL(s.photo)}" style="width: 100%; height: 100%; object-fit: cover;">`
+                    ? `<img src="${URL.createObjectURL(s.photo)}" alt="Preview story offline: ${s.description || 'Tanpa deskripsi'}" style="width: 100%; height: 100%; object-fit: cover;">`
                     : '<i class="fas fa-image text-gray-400"></i>'
                 }
               </div>
@@ -176,16 +176,34 @@ export default class HomePage {
     }
   }
 
-  bindStoryCardClick(handler) {
-    const cards = document.querySelectorAll('.story-card');
-    cards.forEach((card, index) => {
-      card.addEventListener('click', () => handler(index));
-      card.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handler(index);
-        }
+  bindFavoriteToggle(handler) {
+    const buttons = document.querySelectorAll('.favorite-toggle-btn');
+    buttons.forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const { storyId } = button.dataset;
+        await handler(storyId);
       });
+    });
+  }
+
+  updateFavoriteButton(storyId, isFavorite) {
+    const buttons = document.querySelectorAll('.favorite-toggle-btn');
+    buttons.forEach((button) => {
+      if (button.dataset.storyId !== storyId) {
+        return;
+      }
+
+      button.classList.toggle('is-favorite', isFavorite);
+      button.setAttribute('aria-pressed', isFavorite ? 'true' : 'false');
+      button.setAttribute(
+        'aria-label',
+        isFavorite ? 'Hapus dari story tersimpan' : 'Simpan story ini',
+      );
+      button.innerHTML = isFavorite
+        ? '<i class="fas fa-bookmark"></i>'
+        : '<i class="far fa-bookmark"></i>';
     });
   }
 
@@ -195,7 +213,7 @@ export default class HomePage {
 
   // ── Private Helpers ───────────────────────────────────────────────────────
 
-  #createStoryCard(story) {
+  #createStoryCard(story, isFavorite = false) {
     const defaultImg = 'https://placehold.co/400x200?text=No+Image';
     const imgUrl = story.photoUrl || defaultImg;
     const dateStr = new Date(story.createdAt).toLocaleDateString('id-ID', {
@@ -205,20 +223,33 @@ export default class HomePage {
     });
 
     return `
-      <article class="story-card" tabindex="0" aria-label="Story dari ${story.name}">
-        <a href="#/detail/${story.id}" class="story-card-link-wrapper" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
-          <img src="${imgUrl}" alt="Foto yang dibagikan oleh ${story.name}" loading="lazy">
-          <div class="story-card-body">
+      <article class="story-card" aria-label="Story dari ${story.name}">
+        <img src="${imgUrl}" alt="Foto yang dibagikan oleh ${story.name}" loading="lazy">
+        <div class="story-card-body">
+          <div class="story-card-header-row">
             <h2 class="story-card-title">
               <i class="fas fa-user-circle"></i> ${story.name}
             </h2>
-            <time class="story-card-date" datetime="${story.createdAt}">
-              <i class="fas fa-calendar-alt"></i> ${dateStr}
-            </time>
-            <p class="story-card-desc" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${story.description}</p>
-            <span class="btn btn-sm btn-block" style="margin-top: auto; display: inline-block; width: 100%;">Lihat Detail</span>
+            <button
+              type="button"
+              class="favorite-toggle-btn ${isFavorite ? 'is-favorite' : ''}"
+              data-story-id="${story.id}"
+              aria-label="${isFavorite ? 'Hapus dari story tersimpan' : 'Simpan story ini'}"
+              aria-pressed="${isFavorite ? 'true' : 'false'}"
+            >
+              <i class="${isFavorite ? 'fas' : 'far'} fa-bookmark"></i>
+            </button>
           </div>
-        </a>
+          <time class="story-card-date" datetime="${story.createdAt}">
+            <i class="fas fa-calendar-alt"></i> ${dateStr}
+          </time>
+          <p class="story-card-desc" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${story.description}</p>
+          <div class="story-card-actions" style="margin-top: auto;">
+            <a href="#/detail/${story.id}" class="btn btn-sm btn-block" style="width: 100%;">
+              Lihat Detail
+            </a>
+          </div>
+        </div>
       </article>
     `;
   }

@@ -65,6 +65,7 @@ export const PushManager = {
     try {
       const subscription = await this.getSubscription();
       if (subscription) {
+        await StoryApi.unsubscribeNotification(subscription.endpoint);
         await subscription.unsubscribe();
         console.log('Push Notification Unsubscribed');
         return true;

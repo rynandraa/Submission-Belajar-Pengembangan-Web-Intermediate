@@ -207,6 +207,12 @@ body {
   outline: none;
   box-shadow: var(--focus-ring);
 }
+.btn i {
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 .btn-block {
   width: 100%;
 }
@@ -605,6 +611,20 @@ textarea.form-control {
   font-size: 0.85rem;
   color: var(--secondary-text);
 }
+.home-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.home-header-action {
+  margin-left: auto;
+}
+.saved-empty-btn i {
+  font-size: 0.9rem;
+  transform: translateY(-0.5px);
+}
 
 @media (max-width: 600px) {
   .toolbar {
@@ -735,7 +755,7 @@ textarea.form-control {
   box-shadow: var(--shadow-sm);
   overflow: hidden;
   border: 1px solid var(--border-color);
-  cursor: pointer;
+  cursor: default;
   transition:
     transform 0.22s ease,
     box-shadow 0.22s ease;
@@ -780,6 +800,12 @@ textarea.form-control {
   color: var(--primary-color);
   font-size: 0.95rem;
 }
+.story-card-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
 .story-card-date {
   display: block;
   font-size: 0.8rem;
@@ -799,6 +825,36 @@ textarea.form-control {
   -webkit-box-orient: vertical;
   overflow: hidden;
   line-height: 1.5;
+}
+.story-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.favorite-toggle-btn {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 999px;
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s, background-color 0.2s;
+}
+.favorite-toggle-btn:hover {
+  background-color: #eef2ff;
+  color: #4f46e5;
+}
+.favorite-toggle-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.favorite-toggle-btn.is-favorite {
+  color: #f59e0b;
 }
 
 /* ── Add Story Form Layout ───────────────────────────────────────────────── */
@@ -832,6 +888,17 @@ textarea.form-control {
 
 /* ── Navigation Responsive ───────────────────────────────────────────────── */
 @media (max-width: 600px) {
+  .home-header-row {
+    flex-wrap: wrap;
+  }
+  .home-header-row .content-title {
+    width: 100% !important;
+  }
+  .home-header-action {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
   .nav-item a span {
     display: none;
   }

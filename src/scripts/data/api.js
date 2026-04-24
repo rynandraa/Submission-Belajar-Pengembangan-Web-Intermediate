@@ -105,13 +105,33 @@ export const StoryApi = {
 
   async subscribeNotification(subscription) {
     const token = sessionHelper.getToken();
+    const payload = subscription.toJSON
+      ? subscription.toJSON()
+      : subscription;
+
     const response = await fetch(`${BASE_URL}/notifications/subscribe`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(subscription),
+      body: JSON.stringify({
+        endpoint: payload.endpoint,
+        keys: payload.keys,
+      }),
+    });
+    return response.json();
+  },
+
+  async unsubscribeNotification(endpoint) {
+    const token = sessionHelper.getToken();
+    const response = await fetch(`${BASE_URL}/notifications/subscribe`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ endpoint }),
     });
     return response.json();
   },

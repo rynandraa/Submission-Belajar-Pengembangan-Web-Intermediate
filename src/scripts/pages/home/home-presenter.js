@@ -6,6 +6,7 @@ import { idbHelper } from '../../data/idb-helper.js';
 export default class HomePresenter {
   #view;
   #allStories = [];
+  #favoriteIds = new Set();
 
   constructor({ view }) {
     this.#view = view;
@@ -22,6 +23,7 @@ export default class HomePresenter {
     // Beri waktu DOM render sebelum Leaflet mengakses container
     setTimeout(async () => {
       this.#view.initMap([-6.2, 106.816666]);
+      await this.#loadFavoriteIds();
       await this.#loadStories();
       await this.#loadPendingStories();
       this.#initInteractivity();
@@ -111,14 +113,11 @@ export default class HomePresenter {
     if (stories.length === 0) {
       this.#view.showEmpty(); // Note: showEmpty removes all cards visually
     } else {
-      this.#view.showStories(stories);
+      this.#view.showStories(stories, this.#favoriteIds);
       this.#view.addMapMarkers(stories);
 
-      this.#view.bindStoryCardClick((index) => {
-        const markers = this.#view.getMapMarkers();
-        if (markers[index]) {
-          this.#view.focusMapMarker(markers[index]);
-        }
+      this.#view.bindFavoriteToggle(async (storyId) => {
+        await this.#toggleFavorite(storyId);
       });
     }
   }
@@ -129,6 +128,40 @@ export default class HomePresenter {
       this.#view.showPendingStories(pending);
     } catch (e) {
       console.warn('Failed to load pending stories', e);
+    }
+  }
+
+  async #loadFavoriteIds() {
+    try {
+      const favorites = await idbHelper.getAllFavorites();
+      this.#favoriteIds = new Set((favorites || []).map((story) => story.id));
+    } catch (error) {
+      console.warn('Failed to load favorite story IDs', error);
+      this.#favoriteIds = new Set();
+    }
+  }
+
+  async #toggleFavorite(storyId) {
+    try {
+      const targetStory = this.#allStories.find((story) => story.id === storyId);
+      if (!targetStory) {
+        return;
+      }
+
+      const isAlreadyFavorite = this.#favoriteIds.has(storyId);
+
+      if (isAlreadyFavorite) {
+        await idbHelper.deleteFavorite(storyId);
+        this.#favoriteIds.delete(storyId);
+        this.#view.updateFavoriteButton(storyId, false);
+        return;
+      }
+
+      await idbHelper.putFavorite(targetStory);
+      this.#favoriteIds.add(storyId);
+      this.#view.updateFavoriteButton(storyId, true);
+    } catch (error) {
+      this.#view.showError('Gagal menyimpan story ke IndexedDB.');
     }
   }
 }

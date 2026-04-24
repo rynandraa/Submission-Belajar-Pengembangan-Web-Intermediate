@@ -42,7 +42,7 @@ export const mapHelper = {
         marker.bindPopup(`
           <div style="font-family: inherit; text-align: center;">
             <b style="font-size:14px;">${story.name}</b><br>
-            <img src="${imgUrl}" alt="${story.name}" style="width:100px; height:auto; border-radius:4px; margin: 8px 0;">
+            <img src="${imgUrl}" alt="Foto story oleh ${story.name}" style="width:100px; height:auto; border-radius:4px; margin: 8px 0;">
             ${story.id ? `<br><a href="#/detail/${story.id}" class="btn btn-sm" style="display:inline-block; margin-top:4px; padding: 6px 12px; text-decoration: none; font-size: 0.85rem; color: #ffffff !important;">Lihat Detail</a>` : ''}
           </div>
         `);
